@@ -34,14 +34,3 @@ twenty_year_final = elon_investment * ((1 + (twenty_year_rate / 100)) ** n2)
 #Printing out final bond values
 print('The final value of the 10 year bond is: ', f'{ten_year_final:.2f}', 'USD')
 print('The final value of the 20 year bond is: ', f'{twenty_year_final:.2f}', 'USD')
-
-#Final profit for 10 and 20 year bonds
-#ten_year_profit_unrounded = ten_year_final - elon_investment
-#twenty_year_profit_unrounded = twenty_year_final - elon_investment
-
-#10_year_profit = f'{ten_year_profit_unrounded:.2f}'
-#20_year_profit = f'{twenty_year_profit_unrounded:.2f}'
-
-#Printing the profit for 10 and 20 year bonds
-#print('If Elon did not buy the blue bird but bought a 10 year bond instead, he would have profited', 10_year_profit, 'USD')
-#print('If Elon did not buy the blue bird but bought a 20 year bond instead, he would have profited', 20_year_profit, 'USD')
