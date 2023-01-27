@@ -8,8 +8,18 @@ Note: this problem does not require the "compounding interest" formula from the 
 
 """
 
-### Your code here ###
+#Total cost of attendance for one in/out of state student (USD)
+in_state_cost = 30792
+out_state_cost = 47882
 
-in_state_gift = 0
+#Interest rate
+rate = 5 / 100
 
-out_state_gift = 0
+#Final answers
+in_state_gift = in_state_cost / rate
+
+out_state_gift = out_state_cost / rate
+
+#Printing final answers
+print('alumn would need to donate', in_state_gift, 'USD to pay for one in-state student.')
+print('alumn would need to donate', out_state_gift, 'USD to pay for one out of state student.')
