@@ -22,4 +22,4 @@ out_state_gift = out_state_cost / rate
 
 #Printing final answers
 print('alumn would need to donate', in_state_gift, 'USD to pay for one in-state student.')
-print('alumn would need to donate', out_state_gift, 'USD to pay for one out of state student.')
+print('alumn would need to donate', out_state_gift, 'USD to pay for one out-of-state student.')
