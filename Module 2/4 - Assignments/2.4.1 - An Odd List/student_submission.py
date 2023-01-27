@@ -20,7 +20,7 @@ YOUR CODE BEGINS BELOW HERE. FILL IN THE MISSING OPERATIONS / CODE
 """
 
 # use len() to find the length of the list
-list_length = 0 #modify this line to perform the correct operation
+list_length = len(odd_list) #modify this line to perform the correct operation
 
 # now calculate the middle index of the list
 middle_index = 0 #modify this line to perform the correct operation
