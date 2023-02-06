@@ -25,7 +25,14 @@ upper_bound = 1000
 nums = generate_random_int_list(max_length, upper_bound)
 
 # create two variables to hold the final answers
-num_evens = None
-num_odds = None
 
-### YOUR CODE BEGINS HERE ###
+num_evens = 0
+num_odds = 0
+
+for i in nums:
+    if i % 2 == 0:
+        num_evens = num_evens + 1
+    else:
+        num_odds = num_odds + 1
+
+print(num_evens, num_odds)
