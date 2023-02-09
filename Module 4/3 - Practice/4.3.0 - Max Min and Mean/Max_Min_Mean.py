@@ -16,13 +16,34 @@ list_average = -1
 
 
 # First Loop Here:
+temp_min = list_one[0]
 
+for num in list_one:
+    if num < temp_min:
+        temp_min = num
+        list_min = num
+    else:
+        continue
+print(f'The minimum value is {list_min}')
 
 # Second Loop Here:
+temp_max = list_one[0]
 
+for num in list_one:
+    if num > temp_max:
+        temp_max = num
+        list_max = num
+    else:
+        continue
+print(f'The maximum value is {list_max}')
 
 # Third Loop Here:
-
+temp_total = 0
+for num in list_one:
+    temp_total += num
+    temp_avg = temp_total / len(list_one)
+    list_average = temp_avg
+print(f'The average value is {list_average}')
 
 
 
