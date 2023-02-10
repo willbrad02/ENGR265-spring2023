@@ -9,10 +9,39 @@ def my_pi(target_error):
     :return: Approximation of PI to specified error bound
     """
 
-    ### YOUR CODE HERE ###
+    pi_estimate = 0
+    error = abs(pi_estimate - math.pi)
+
+    while error > target_error:
+
+        a = 1
+        b = 1 / math.sqrt(2)
+        t = 1 / 4
+        p = 1
+
+        for i in range(1, 10):
+            a_temp = (a + b) / 2
+            b_temp = math.sqrt(a * b)
+            t_temp = t - (p * (math.pow((a - a_temp), 2)))
+            p_temp = 2 * p
+
+            a = a_temp
+            b = b_temp
+            t = t_temp
+            p = p_temp
+
+            print("Loop Iteration: ", i)
+
+            #Updating pi estimate
+
+            pi_estimate = (math.pow((a + b), 2)) / (4 * t)
+
+
+
+
 
     # change this so an actual value is returned
-    return 0
+    return pi_estimate
 
 
 
