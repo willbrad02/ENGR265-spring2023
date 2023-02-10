@@ -10,9 +10,9 @@ def my_pi(target_error):
     """
 
     pi_estimate = 0
-    error = abs(pi_estimate - math.pi)
+    current_error = abs(pi_estimate - math.pi)
 
-    while error > target_error:
+    while current_error > target_error:
 
         a = 1
         b = 1 / math.sqrt(2)
@@ -35,10 +35,6 @@ def my_pi(target_error):
             #Updating pi estimate
 
             pi_estimate = (math.pow((a + b), 2)) / (4 * t)
-
-
-
-
 
     # change this so an actual value is returned
     return pi_estimate
