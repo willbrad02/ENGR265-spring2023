@@ -36,6 +36,8 @@ def my_pi(target_error):
 
             pi_estimate = (math.pow((a + b), 2)) / (4 * t)
 
+        current_error = abs(pi_estimate - math.pi)
+        
     # change this so an actual value is returned
     return pi_estimate
 
