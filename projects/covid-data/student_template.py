@@ -74,13 +74,21 @@ if __name__ == "__main__":
     # date, county, state, fips, cases, and deaths
 
     # for example, we can print out the data for the first point in the US counties file
-    point = data[0]
+    #point = data[0]
 
-    print("Data: ", point.date, " County: ", point.county, " State: ", point.state,
-          " FIPS: ", point.fips, " Cases: ", point.cases, " Deaths: ", point.death)
+    #print("Data: ", point.date, " County: ", point.county, " State: ", point.state,
+     #     " FIPS: ", point.fips, " Cases: ", point.cases, " Deaths: ", point.death)
 
     # write code to address the following question:
     # When was the first positive COVID case in Rockingham County? When was the first in Harrisonburg?
+
+for i in range(len(data)):
+    point1 = data[i]
+    if point1.county == 'Rockingham' and point1.cases == 1:
+        print(f'The first positive COVID case in Rockingham County was on {point1.date}.')
+    elif point1.county == 'Harrisonburg city' and point1.cases == 1:
+        print(f'The first positive COVID case in Harrisonburg City was on {point1.date}.')
+        break
 
     # write code to address the following question:
     # What day was the greatest number of new daily cases recorded in Harrisonburg? When was the greatest day in Rockingham County?
