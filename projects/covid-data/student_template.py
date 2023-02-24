@@ -104,7 +104,7 @@ for i in range(len(data)):
         hburg_dates.append(point1.date)
         break
 
-    # Printing out the first entry in the Rockingham and Harrisonburg data lists, which will inherently be the data on
+    # Printing out the entry in the Rockingham and Harrisonburg data lists, which will inherently be the data on
     # which the first case was recorded
 print(f'The first positive COVID case in Rockingham County was on {rham_dates[0]}.')
 print(f'The first positive COVID case in Harrisonburg City was on {hburg_dates[0]}.')
