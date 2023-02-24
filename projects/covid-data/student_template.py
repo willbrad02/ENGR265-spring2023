@@ -82,13 +82,26 @@ if __name__ == "__main__":
     # write code to address the following question:
     # When was the first positive COVID case in Rockingham County? When was the first in Harrisonburg?
 
+# Placeholder lists for the dates corresponding to each Rockingham and Harrisonburg data point
+rham_dates = []
+hburg_dates = []
+
+# Iterating through entire length of list "data" and temporarily storing each index
 for i in range(len(data)):
     point1 = data[i]
-    if point1.county == 'Rockingham' and point1.cases == 1:
-        print(f'The first positive COVID case in Rockingham County was on {point1.date}.')
-    elif point1.county == 'Harrisonburg city' and point1.cases == 1:
-        print(f'The first positive COVID case in Harrisonburg City was on {point1.date}.')
-        break
+
+    # Checking if, at the stored index, the county is Rockingham and storing the date of each Rockingham data point
+    if point1.county == 'Rockingham':
+        rham_dates.append(point1.date)
+
+    # Checking if, at the stored index, the county is Harrisonburg and storing the date of each Harrisonburg data point
+    elif point1.county == 'Harrisonburg city':
+        hburg_dates.append(point1.date)
+
+    # Printing out the first entry in the Rockingham and Harrisonburg data lists, which will inherently be the data on
+    # which the first case was recorded
+print(f'The first positive COVID case in Rockingham County was on {rham_dates[0]}.')
+print(f'The first positive COVID case in Harrisonburg City was on {hburg_dates[0]}.')
 
     # write code to address the following question:
     # What day was the greatest number of new daily cases recorded in Harrisonburg? When was the greatest day in Rockingham County?
