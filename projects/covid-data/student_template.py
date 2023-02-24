@@ -90,13 +90,19 @@ hburg_dates = []
 for i in range(len(data)):
     point1 = data[i]
 
-    # Checking if, at the stored index, the county is Rockingham and storing the date of each Rockingham data point
+    # Finding the first occurrence of "Rockingham" and storing the date
     if point1.county == 'Rockingham':
         rham_dates.append(point1.date)
+        break
 
-    # Checking if, at the stored index, the county is Harrisonburg and storing the date of each Harrisonburg data point
-    elif point1.county == 'Harrisonburg city':
+# Iterating through entire length of list "data" and temporarily storing each index
+for i in range(len(data)):
+    point1 = data[i]
+
+    # Finding the first occurrence of "Harrisonburg city" and storing the date
+    if point1.county == 'Harrisonburg city':
         hburg_dates.append(point1.date)
+        break
 
     # Printing out the first entry in the Rockingham and Harrisonburg data lists, which will inherently be the data on
     # which the first case was recorded
