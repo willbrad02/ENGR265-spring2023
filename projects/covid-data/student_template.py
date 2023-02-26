@@ -152,32 +152,35 @@ print(f'The day that the greatest number of new daily cases was recorded in Harr
     # What was the worst seven day period in either the city and county for new COVID cases? This is the 7-day period where the number of new cases was maximal.
 
 
-def calculate_worst_week(data, cases):
+def calculate_worst_week(county_data, cases):
     """Calculate seven-day period with the greatest number of new cases.
 
-    :param data: Complete dataset of county
+    :param county_data: Complete dataset of county
     :param cases: List of all daily case numbers
     :return: Tuple of the start/end date of the week that saw the greatest spike in COVID cases and
     the number of new cases
     """
+    # Variables for: period placeholder list, initial worst week guess, and worst week start/end
+    period = []
+    worst_week_num = cases[6]
+    worst_week_start = 0
+    worst_week_end = 0
+
     # Iterating through the inputted list
     for i in range(len(cases)):
 
-        # Variables for: period placeholder list, initial worst week guess, and worst week start/end
-        period = []
-        worst_week_num = sum(cases[:8])
-        worst_week_start = 0
-        worst_week_end = 0
+        # Starting at index 6 to avoid summing negatives indices
+        if i > 5:
 
-        # Starting at index 7 to avoid summing negatives indices
-        if i > 6:
-            period = cases[(i-7):(i+1)]
+            # Number of cases before the period and at the end of the period
+            start_cases = cases[i-6]
+            end_cases = cases[i]
 
             # Updating worst week guess and storing the week start/end dates
-            if sum(period) > worst_week_num:
-                worst_week_num = sum(period)
-                worst_week_start = data[i-7].date
-                worst_week_end = data[i].date
+            if (end_cases - start_cases) > worst_week_num:
+                worst_week_num = end_cases - start_cases
+                worst_week_start = county_data[i-6].date
+                worst_week_end = county_data[i].date
 
     return (worst_week_start, worst_week_end, worst_week_num)
 
