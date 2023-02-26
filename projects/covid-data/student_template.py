@@ -74,45 +74,81 @@ if __name__ == "__main__":
     # date, county, state, fips, cases, and deaths
 
     # for example, we can print out the data for the first point in the US counties file
-    #point = data[0]
+    '''point = data[0]
 
-    #print("Data: ", point.date, " County: ", point.county, " State: ", point.state,
-     #     " FIPS: ", point.fips, " Cases: ", point.cases, " Deaths: ", point.death)
-
+    print("Data: ", point.date, " County: ", point.county, " State: ", point.state,
+          " FIPS: ", point.fips, " Cases: ", point.cases, " Deaths: ", point.death)
+'''
     # write code to address the following question:
     # When was the first positive COVID case in Rockingham County? When was the first in Harrisonburg?
 
-# Placeholder lists for the dates corresponding to each Rockingham and Harrisonburg data point
-rham_dates = []
-hburg_dates = []
+# Placeholder lists for all Rockingham and Harrisonburg data
+rham_data = []
+hburg_data = []
 
 # Iterating through entire length of list "data" and temporarily storing each index
 for i in range(len(data)):
     point1 = data[i]
 
-    # Finding the first occurrence of "Rockingham" and storing the date
+    # Finding each occurrence of "Rockingham" and storing the associated data
     if point1.county == 'Rockingham':
-        rham_dates.append(point1.date)
-        break
+        rham_data.append(point1)
 
-# Iterating through entire length of list "data" and temporarily storing each index
-for i in range(len(data)):
-    point1 = data[i]
+    # Finding each occurrence of "Harrisonburg city" and storing the associated data
+    elif point1.county == 'Harrisonburg city':
+        hburg_data.append(point1)
 
-    # Finding the first occurrence of "Harrisonburg city" and storing the date
-    if point1.county == 'Harrisonburg city':
-        hburg_dates.append(point1.date)
-        break
+# Storing the first data point of Rockingham and also the date associated
+rham_first_point = rham_data[0]
+rham_first_case_date = rham_first_point.date
 
-    # Printing out the entry in the Rockingham and Harrisonburg data lists, which will inherently be the data on
-    # which the first case was recorded
-print(f'The first positive COVID case in Rockingham County was on {rham_dates[0]}.')
-print(f'The first positive COVID case in Harrisonburg City was on {hburg_dates[0]}.')
+# Storing the first data point of Harrisonburg and also the date associated
+hburg_first_point = hburg_data[0]
+hburg_first_case_date = hburg_first_point.date
+
+# Printing out the date for the first recorded COVID cases in Rockingham and Harrisonburg
+print(f'The first positive COVID case in Rockingham County was on {rham_first_case_date}.')
+print(f'The first positive COVID case in Harrisonburg City was on {hburg_first_case_date}.\n')
 
     # write code to address the following question:
     # What day was the greatest number of new daily cases recorded in Harrisonburg? When was the greatest day in Rockingham County?
 
+# Placeholder lists for the daily number of cases for Rockingham and Harrisonburg
+rham_cases = []
+hburg_cases = []
+
+# Iterating through the Rockingham data list and storing all the number of cases
+for i in range(len(rham_data)):
+    data_point = rham_data[i]
+    rham_cases.append(data_point.cases)
+
+# Iterating through the Harrisonburg data list and storing all the number of cases
+for i in range(len(hburg_data)):
+    data_point = hburg_data[i]
+    hburg_cases.append(data_point.cases)
+
+# Variable holding the temporary maximum Rockingham and Harrisonburg daily case spike
+rham_max = rham_cases[1] - rham_cases[0]
+hburg_max = hburg_cases[1] - hburg_cases[0]
+
+# Placeholder variables for the day of greatest increase for Rockingham and Harrisonburg
+rham_max_day = 0
+hburg_max_day = 0
+
+# Iterating through the Rockingham data, finding the index of the day of greatest increase.
+# Updating placeholder variables with that respective date for Harrisonburg and Rockingham
+for i in range(len(rham_cases)):
+    if (rham_cases[i] - rham_cases[i-1]) > rham_max:
+        rham_max = rham_cases[i] - rham_cases[i-1]
+        rham_max_day = rham_data[i].date
+    elif (hburg_cases[i] - hburg_cases[i-1]) > hburg_max:
+        hburg_max = hburg_cases[i] - hburg_cases[i-1]
+        hburg_max_day = hburg_data[i].date
+
+
+print(f'The day that the greatest number of new daily cases was recorded in Harrisonburg City was on {hburg_max_day}.')
+print(f'The day that the greatest number of new daily cases was recorded in Rockingham County was on {rham_max_day}.\n')
+
     # write code to address the following question:
     # What was the worst seven day period in either the city and county for new COVID cases? This is the 7-day period where the number of new cases was maximal.
-
 
