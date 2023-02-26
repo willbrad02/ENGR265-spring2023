@@ -145,10 +145,49 @@ for i in range(len(rham_cases)):
         hburg_max = hburg_cases[i] - hburg_cases[i-1]
         hburg_max_day = hburg_data[i].date
 
-
-print(f'The day that the greatest number of new daily cases was recorded in Harrisonburg City was on {hburg_max_day}.')
-print(f'The day that the greatest number of new daily cases was recorded in Rockingham County was on {rham_max_day}.\n')
+print(f'The day that the greatest number of new daily cases was recorded in Rockingham County was on {rham_max_day}.')
+print(f'The day that the greatest number of new daily cases was recorded in Harrisonburg City was on {hburg_max_day}.\n')
 
     # write code to address the following question:
     # What was the worst seven day period in either the city and county for new COVID cases? This is the 7-day period where the number of new cases was maximal.
 
+
+def calculate_worst_week(data, cases):
+    """Calculate seven-day period with the greatest number of new cases.
+
+    :param data: Complete dataset of county
+    :param cases: List of all daily case numbers
+    :return: Tuple of the start/end date of the week that saw the greatest spike in COVID cases and
+    the number of new cases
+    """
+    # Iterating through the inputted list
+    for i in range(len(cases)):
+
+        # Variables for: period placeholder list, initial worst week guess, and worst week start/end
+        period = []
+        worst_week_num = sum(cases[:8])
+        worst_week_start = 0
+        worst_week_end = 0
+
+        # Starting at index 7 to avoid summing negatives indices
+        if i > 6:
+            period = cases[(i-7):(i+1)]
+
+            # Updating worst week guess and storing the week start/end dates
+            if sum(period) > worst_week_num:
+                worst_week_num = sum(period)
+                worst_week_start = data[i-7].date
+                worst_week_end = data[i].date
+
+    return (worst_week_start, worst_week_end, worst_week_num)
+
+
+# Calculating the worst seven-day period in terms of new COVID cases in Rockingham and Harrisonburg
+rham_worst_week = calculate_worst_week(rham_data, rham_cases)
+hburg_worst_week = calculate_worst_week(hburg_data, hburg_cases)
+
+# Printing the worst week for Rockingham and Harrisonburg and the number of new cases for each
+print(f'The worst seven-day period in Rockingham County for new COVID cases was from {rham_worst_week[0]} to '
+      f'{rham_worst_week[1]} with a total of {rham_worst_week[2]} new cases.')
+print(f'The worst seven-day period in Harrisonburg City for new COVID cases was from {hburg_worst_week[0]} to '
+      f'{hburg_worst_week[1]} with a total of {hburg_worst_week[2]} new cases.')
