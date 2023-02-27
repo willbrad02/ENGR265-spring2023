@@ -75,7 +75,7 @@ def calculate_max_strength_strain(strain, stress):
     Fracture Strain: the maximum strain experienced before fracture
     """
 
-    # calculate the maximum stress experienced
+    # calculate the maximum stress experienced, use numpy max/min
     ultimate_tensile_stress = -1
 
     # calculate the maximum strain experienced
