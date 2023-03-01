@@ -42,7 +42,7 @@ def main(full_path_to_file):
     # given some acceptable delta
 
     # when the signal exceeds the baseline plus delta, that is the landing point
-    delta = 5
+    delta = 3
 
     # make a variable to hold the INDEX of that landing point. We will later convert that
     # index to time based upon the force plate sample rate
@@ -67,7 +67,7 @@ def main(full_path_to_file):
     # Consider this the take off point.
 
     # when the signal falls below the baseline plus delta, that is the take off point
-    delta = 5
+    delta = 4
 
     # make a variable to hold the INDEX of that take-off point. We will later convert that
     # index to time based upon the force plate sample rate
@@ -95,7 +95,7 @@ def main(full_path_to_file):
     # This code block should be the same (functionally) as Step 2 but starting at a different point
 
     # when the signal falls above the baseline plus delta, that is the take off point
-    delta = 5
+    delta = 2
 
     # variable to hold the index for the second landing
     second_landing_index = -1
@@ -116,10 +116,10 @@ def main(full_path_to_file):
     # Step 5: calculate the time of contact on plate and time of flight in air
 
     # calculate tc and convert to seconds using the sampling rate
-    time_of_contact = take_off_index - first_landing_index
+    time_of_contact = (take_off_index - first_landing_index) / 1000
 
     # calculate tf and convert to seconds using the sampling rate
-    time_of_flight = second_landing_index - take_off_index
+    time_of_flight = (second_landing_index - take_off_index) / 1000
 
     # Step 6: Calculate the Reactive Strength Index
 
