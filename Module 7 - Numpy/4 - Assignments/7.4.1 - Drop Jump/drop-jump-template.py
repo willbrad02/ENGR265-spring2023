@@ -42,7 +42,7 @@ def main(full_path_to_file):
     # given some acceptable delta
 
     # when the signal exceeds the baseline plus delta, that is the landing point
-    delta = 3
+    delta = 5
 
     # make a variable to hold the INDEX of that landing point. We will later convert that
     # index to time based upon the force plate sample rate
@@ -54,7 +54,7 @@ def main(full_path_to_file):
 
     # walk through the list but start at the end of our baseline
     for index in range(baseline_length, len(force_plate_list)):
-        # grab the current value in the list
+        # Current value in the list
         value = force_plate_list[index]
 
         # Store the index of the first value that is above the baseline + delta
@@ -67,7 +67,7 @@ def main(full_path_to_file):
     # Consider this the take off point.
 
     # when the signal falls below the baseline plus delta, that is the take off point
-    delta = 4
+    delta = 5
 
     # make a variable to hold the INDEX of that take-off point. We will later convert that
     # index to time based upon the force plate sample rate
@@ -80,7 +80,7 @@ def main(full_path_to_file):
     # walk through the list but start a few moments after the at the landing index
     # since we know the take off point will be afterwards.
     for index in range(first_landing_index + 10, len(force_plate_list)):
-
+        # Current value in the list
         value = force_plate_list[index]
 
         # Store the index of the first value that is below the baseline + delta
@@ -95,7 +95,7 @@ def main(full_path_to_file):
     # This code block should be the same (functionally) as Step 2 but starting at a different point
 
     # when the signal falls above the baseline plus delta, that is the take off point
-    delta = 2
+    delta = 5
 
     # variable to hold the index for the second landing
     second_landing_index = -1
