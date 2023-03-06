@@ -126,8 +126,8 @@ def calculate_elastic_modulus(strain, stress):
 
     # Step 3c: down select to linear region for stress and strain
     # using list slicing. Uncomment lines below
-    linear_stress = stress[0:(linear_index + 1)]
-    linear_strain = strain[0:(linear_index + 1)]
+    linear_stress = stress[0:linear_index]
+    linear_strain = strain[0:linear_index]
 
     # Step 3d: find least squares fit to a line in the linear region
     # use 1-degree polynominal fit (line) from np.polyfit
