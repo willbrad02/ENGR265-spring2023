@@ -60,9 +60,13 @@ def calculate_stress(force, sample_diameter):
     :return: An array of stresses experienced by the sample in Kilo Pascals (KPa)
     """
 
-    ### YOUR SOLUTION FROM STEP 1 TEMPLATE HERE ###
+    # Calculate the cross-section area (mm^2)
+    area = (m.pi / 4) * sample_diameter ** 2
 
-    return None
+    # Calculate stress (MPa) from load (kN) and cross-sectional area
+    stress = force / area
+
+    return stress
 
 
 def calculate_max_strength_strain(strain, stress):
@@ -75,9 +79,13 @@ def calculate_max_strength_strain(strain, stress):
     Fracture Strain: the maximum strain experienced before fracture
     """
 
-    ### YOUR SOLUTION FROM STEP 2 TEMPLATE HERE ###
+    # Calculate the maximum stress experienced, use numpy max/min
+    ultimate_tensile_stress = np.max(stress)
 
-    return -1, -1
+    # Calculate the maximum strain experienced
+    fracture_strain = strain[np.argmax(strain) - 1]
+
+    return ultimate_tensile_stress, fracture_strain
 
 def calculate_elastic_modulus(strain, stress):
     """
@@ -96,9 +104,25 @@ def calculate_elastic_modulus(strain, stress):
     slope = None
     intercept = None
 
-    ### YOUR SOLUTION FROM STEP 3 TEMPLATE HERE ###
+    # Find the point that is 40% of peak stress
+    secant_strain = ultimate_tensile_strength * .4
+
+    # Find the intersection between 40% line and the curvey
+    diffs = abs(stress - secant_strain)
+
+    # INDEX of the point in stress-strain that is closest to secant_strain intersection
+    linear_index = np.argmin(diffs)
+
+    # Down select to linear region for stress and strain
+    linear_stress = stress[0:(linear_index + 1)]
+    linear_strain = strain[0:(linear_index + 1)]
+
+    # Find least squares fit to a line in the linear region
+    # Save the slope and intercept so we can plot the line later
+    slope, intercept = np.polyfit(linear_strain, linear_stress, 1)
 
     return linear_index, slope, intercept
+
 
 def calculate_percent_offset(slope, strain, stress):
     """
