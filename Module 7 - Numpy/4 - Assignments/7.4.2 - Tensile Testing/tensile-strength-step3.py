@@ -107,13 +107,13 @@ def calculate_elastic_modulus(strain, stress):
     # Step 3a: find the point that is 40% of peak stress
     # use from 0 to that value to create a linear plot
 
-    secant_strain = stress - ultimate_tensile_strength
+    secant_strain = ultimate_tensile_strength * .4
 
     # Step 3b: find the intersection between 40% line and the curvey
-    # take the abs() difference between the stress vector and secant_straint point
+    # take the abs() difference between the stress vector and secant_strain point
 
     ### your code below ###
-    diffs = abs(secant_strain)
+    diffs = abs(stress - secant_strain)
 
     # use np.argmin() to find the minimum of the diffs array.
     # this will be the INDEX of the point in stress-strain that is closest to
@@ -132,7 +132,7 @@ def calculate_elastic_modulus(strain, stress):
     # save the slope and intercept so we can plot the line later
 
     # uncomment the line below and call np.polyfit
-    slope, intercept = np.polyfit()
+    slope, intercept = np.polyfit(linear_strain, linear_stress, 1)
 
     return linear_index, slope, intercept
 
