@@ -1,6 +1,6 @@
 import numpy as np
 import os
-import math
+import math as m
 import sys
 
 
@@ -139,14 +139,14 @@ def calculate_percent_offset(slope, strain, stress):
     offset = 0.002
 
     # calculate the offset line: y=m(x-0.002) + 0
-    offset_line = None
+    offset_line = slope * (strain - offset)
 
     # measure distance from all points on graph to this line. Consider using the
     # abs() method to ensure values are positive
-    distance = None
+    distance = abs(stress - offset_line)
 
     # use argmin to find the index where the distance is minimal
-    intercept_index = -1
+    intercept_index = np.argmin(distance)
 
     return offset_line, intercept_index
 
@@ -154,10 +154,10 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # modify this line to select different materials/folders within tensile/
-    material_folder = "1045CR"
+    material_folder = "2024"
 
     # modify this line to select different samples in the material folder
-    sample_name = "C01A1045CR_1"
+    sample_name = "C04A2024_1"
 
 
     ### Do not modify below this line ###
