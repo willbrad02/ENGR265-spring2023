@@ -83,7 +83,7 @@ def calculate_max_strength_strain(strain, stress):
     ultimate_tensile_stress = np.max(stress)
 
     # Calculate the maximum strain experienced
-    fracture_strain = strain[np.argmax(strain) - 1]
+    fracture_strain = strain[np.argmax(strain)]
 
     return ultimate_tensile_stress, fracture_strain
 
