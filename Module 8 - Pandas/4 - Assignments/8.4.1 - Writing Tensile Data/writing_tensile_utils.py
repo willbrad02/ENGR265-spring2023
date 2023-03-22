@@ -1,5 +1,4 @@
-import numpy as np
-import math
+
 def parse_tensile_file(path_to_file):
     file = open(path_to_file)
     # required meta-data
