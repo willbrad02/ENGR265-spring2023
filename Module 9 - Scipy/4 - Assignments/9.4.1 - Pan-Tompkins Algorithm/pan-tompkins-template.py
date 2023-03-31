@@ -24,7 +24,7 @@ def main(filepath):
 
     # identify one column to process. Call that column signal
 
-    signal = -1 ## your code here
+    signal = v2
 
     # pass data through LOW PASS FILTER (OPTIONAL)
     ## your code here
