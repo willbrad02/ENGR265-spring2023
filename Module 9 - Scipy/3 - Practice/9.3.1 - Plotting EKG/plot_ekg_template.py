@@ -9,6 +9,9 @@ path = '../../../data/ekg/mitdb_201.csv'
 
 ekg_data = np.loadtxt(path, skiprows=2, delimiter=',')
 
+# Only run first ~10s of data, comment out for entire dataset
+ekg_data = ekg_data[0:3300]
+
 # save each vector as own variable
 
 time = ekg_data[:, 0]

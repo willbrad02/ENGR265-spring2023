@@ -12,10 +12,14 @@ def main(filepath):
     path = filepath
 
     # load data in matrix from CSV file; skip first two rows
-    ## your code here
+    ekg_data = np.loadtxt(path, skiprows=2, delimiter=',')
+
+    # Only run first ~10s of data, comment out for entire dataset
+    ekg_data = ekg_data[0:3300]
 
     # save each vector as own variable
-    ## your code here
+    time = ekg_data[:, 0]
+    voltage = ekg_data[:, 2]
 
     # identify one column to process. Call that column signal
 

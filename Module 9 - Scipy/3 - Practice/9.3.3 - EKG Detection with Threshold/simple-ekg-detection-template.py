@@ -31,15 +31,15 @@ Adjust the values for threshold and timeout to change the detection method/appro
 """
 
 # set a detection threshold (YOUR VALUE BELOW)
-detection_threshold = -1
+detection_threshold = 1
 
 # set a heart beat time out (YOUR VALUE BELOW)
-detection_time_out = -1
+detection_time_out = 100
 
 # track the last time we found a beat
 last_detected_index = -1
 
-# keep not of where we are in the data
+# keep note of where we are in the data
 current_index = 0
 
 # store indices of all found beats

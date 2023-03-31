@@ -24,13 +24,13 @@ signal = v2
 
 # pass data through weighted differentiator
 # I think this is incorrect as it does not look "forward" but should work
-diff = None
+diff = np.diff(signal)
 
 # pass data through square function
-squared = None
+squared = np.square(diff)
 
 # pass through moving average of 150ms window @ 250 Hz => 38 samples
-filtered = None
+filtered = np.convolve(squared, [1, 1, 1])
 
 # make a plot of the results. Can change the plot() parameter below to show different intermediate signals
 plt.title('Signal for ' + database_name + " with detections")
