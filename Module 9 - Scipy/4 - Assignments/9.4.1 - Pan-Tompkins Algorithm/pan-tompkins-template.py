@@ -19,7 +19,8 @@ def main(filepath):
 
     # save each vector as own variable
     time = ekg_data[:, 0]
-    voltage = ekg_data[:, 2]
+    v5 = ekg_data[:, 1]
+    v2 = ekg_data[:, 2]
 
     # identify one column to process. Call that column signal
 
