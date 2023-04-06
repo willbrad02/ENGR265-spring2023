@@ -29,6 +29,7 @@ diff = np.diff(signal)
 # pass data through square function
 squared = np.square(diff)
 
+#@TODO: remove this language in future revisions.
 # pass through moving average of 150ms window @ 250 Hz => 38 samples
 filtered = np.convolve(squared, [1, 1, 1])
 
