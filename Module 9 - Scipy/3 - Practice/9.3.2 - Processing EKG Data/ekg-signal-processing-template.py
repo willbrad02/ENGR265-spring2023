@@ -21,6 +21,9 @@ v2 = raw_ekg_data[:, 2]
 # select a signal to operate on
 signal = v2
 
+# Only operate on the first ~10s of data
+signal = signal[0:3300]
+
 
 # pass data through weighted differentiator
 # I think this is incorrect as it does not look "forward" but should work

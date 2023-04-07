@@ -34,7 +34,7 @@ Adjust the values for threshold and timeout to change the detection method/appro
 detection_threshold = 2.0
 
 # set a heart beat time out
-detection_time_out = 50
+detection_time_out = 100
 
 # track the last time we found a beat
 last_detected_index = -1
@@ -50,7 +50,7 @@ Step 4: Use Find Peaks
 """
 
 # you may want to explore various parameters for the function that will help you!
-peaks, _ = find_peaks(signal)
+peaks, _ = find_peaks(signal, height=detection_threshold, distance=detection_time_out)
 print("Within the sample we found ", len(peaks), " heart beats with find_peaks!")
 
 # plot all the find_peaks results on the same graph

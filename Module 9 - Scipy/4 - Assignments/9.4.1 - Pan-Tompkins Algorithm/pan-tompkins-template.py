@@ -15,7 +15,7 @@ def main(filepath):
     ekg_data = np.loadtxt(path, skiprows=2, delimiter=',')
 
     # Only run first ~10s of data, comment out for entire dataset
-    ekg_data = ekg_data[0:3300]
+    #ekg_data = ekg_data[0:3300]
 
     # save each vector as own variable
     time = ekg_data[:, 0]
@@ -26,27 +26,27 @@ def main(filepath):
 
     signal = v2
 
-    # pass data through LOW PASS FILTER (OPTIONAL)
-    ## your code here
+    '''# pass data through LOW PASS FILTER (OPTIONAL)
+    signal = signal.butter(1, 220, output='sos')
 
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
-    ## your code here
+    signal = signal.butter(1, 30, btype='highpass', output='sos')'''
 
     # pass data through differentiator
-    ## your code here
+    signal = np.diff(signal)
 
     # pass data through square function
-    ## your code here
+    signal = np.square(signal)
 
     # pass through moving average window
-    ## your code here
+    signal = np.convolve(signal, [1, 1, 1])
 
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
 
     ## your code here peaks,_ = find_peaks(....)
 
-    peaks = None
+    peaks, _ = find_peaks(signal, height=.04, distance=50)
 
     # do not modify this line
     return signal, peaks
