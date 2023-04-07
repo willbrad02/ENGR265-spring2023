@@ -14,9 +14,6 @@ def main(filepath):
     # load data in matrix from CSV file; skip first two rows
     ekg_data = np.loadtxt(path, skiprows=2, delimiter=',')
 
-    # Only run first ~10s of data, comment out for entire dataset
-    #ekg_data = ekg_data[0:3300]
-
     # save each vector as own variable
     time = ekg_data[:, 0]
     v5 = ekg_data[:, 1]
@@ -46,7 +43,7 @@ def main(filepath):
 
     ## your code here peaks,_ = find_peaks(....)
 
-    peaks, _ = find_peaks(signal, height=.04, distance=50)
+    peaks, _ = find_peaks(signal, height=.02, distance=50)
 
     # do not modify this line
     return signal, peaks
