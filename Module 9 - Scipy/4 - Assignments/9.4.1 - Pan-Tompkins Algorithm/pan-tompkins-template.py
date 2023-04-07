@@ -43,7 +43,7 @@ def main(filepath):
 
     ## your code here peaks,_ = find_peaks(....)
 
-    peaks, _ = find_peaks(signal, height=.25, distance=25)
+    peaks, _ = find_peaks(signal, height=.02, distance=200)
 
     # do not modify this line
     return signal, peaks
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'mitdb_103'
+    database_name = 'nstdb_118e00'
 
     # set to true if you wish to generate a debug file
     file_debug = True
