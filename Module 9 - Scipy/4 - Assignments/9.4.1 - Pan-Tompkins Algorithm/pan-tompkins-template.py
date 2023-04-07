@@ -1,8 +1,7 @@
 import numpy as np
-from scipy.signal import find_peaks, butter
+from scipy.signal import find_peaks, butter, filtfilt
 
 from ekg_testbench import EKGTestBench
-
 
 def main(filepath):
     if filepath == '':
@@ -23,11 +22,24 @@ def main(filepath):
 
     signal = v2
 
-    '''# pass data through LOW PASS FILTER (OPTIONAL)
-    signal = signal.butter(1, 220, output='sos')
+    # Finding sample frequency
+    sample_freq = 1 / time[1]
+
+    # 220 bpm to Hz
+    high_bps = 220 / 60
+
+    # 30 bpm to Hz
+    low_bps = 30 / 60
+
+    # pass data through LOW PASS FILTER (OPTIONAL)
+    b, a = butter(N=4, Wn=high_bps, output='ba', fs=sample_freq)
+    signal = filtfilt(b, a, signal)
+    # signal = np.convolve(signal, a)
 
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
-    signal = signal.butter(1, 30, btype='highpass', output='sos')'''
+    b2, a2 = butter(N=4, Wn=low_bps, btype='highpass', output='ba', fs=sample_freq)
+    signal = filtfilt(b2, a2, signal)
+    # signal = np.convolve(signal, a2)
 
     # pass data through differentiator
     signal = np.diff(signal)
@@ -36,7 +48,7 @@ def main(filepath):
     signal = np.square(signal)
 
     # pass through moving average window
-    signal = np.convolve(signal, [1, 1, 1, 1])
+    signal = np.convolve(signal, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
@@ -56,7 +68,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'qtdb_sel104'
+    database_name = 'mitdb_201'
 
     # set to true if you wish to generate a debug file
     file_debug = True
