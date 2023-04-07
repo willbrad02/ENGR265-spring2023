@@ -36,14 +36,14 @@ def main(filepath):
     signal = np.square(signal)
 
     # pass through moving average window
-    signal = np.convolve(signal, [1, 1, 1])
+    signal = np.convolve(signal, [1, 1, 1, 1])
 
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
 
     ## your code here peaks,_ = find_peaks(....)
 
-    peaks, _ = find_peaks(signal, height=.02, distance=50)
+    peaks, _ = find_peaks(signal, height=.25, distance=25)
 
     # do not modify this line
     return signal, peaks
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'mitdb_201'
+    database_name = 'mitdb_103'
 
     # set to true if you wish to generate a debug file
     file_debug = True
