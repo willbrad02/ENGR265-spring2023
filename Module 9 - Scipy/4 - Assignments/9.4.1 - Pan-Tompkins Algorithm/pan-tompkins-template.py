@@ -25,21 +25,21 @@ def main(filepath):
     # Finding sample frequency
     sample_freq = 1 / time[1]
 
-    # 220 bpm to Hz
-    high_bps = 220 / 60
+    # bpm to Hz
+    high_bps = 200 / 60
 
-    # 30 bpm to Hz
-    low_bps = 30 / 60
+    # bpm to Hz
+    low_bps = 40 / 60
 
     # pass data through LOW PASS FILTER (OPTIONAL)
-    b, a = butter(N=4, Wn=high_bps, output='ba', fs=sample_freq)
+    b, a = butter(N=1, Wn=high_bps, btype='lowpass', output='ba', fs=sample_freq)
     signal = filtfilt(b, a, signal)
-    # signal = np.convolve(signal, a)
+    #signal = np.convolve(signal, a)
 
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
-    b2, a2 = butter(N=4, Wn=low_bps, btype='highpass', output='ba', fs=sample_freq)
+    b2, a2 = butter(N=1, Wn=low_bps, btype='highpass', output='ba', fs=sample_freq)
     signal = filtfilt(b2, a2, signal)
-    # signal = np.convolve(signal, a2)
+    #signal = np.convolve(signal, a2)
 
     # pass data through differentiator
     signal = np.diff(signal)
@@ -48,14 +48,20 @@ def main(filepath):
     signal = np.square(signal)
 
     # pass through moving average window
-    signal = np.convolve(signal, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    window = []
+    window_length = 50
+
+    for i in range(1, window_length + 1):
+        window.append(int(i / i))
+
+    signal = np.convolve(signal, window)
 
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
 
     ## your code here peaks,_ = find_peaks(....)
 
-    peaks, _ = find_peaks(signal, height=.02, distance=175)
+    peaks, _ = find_peaks(signal, height=.0002, distance=175)
 
     # do not modify this line
     return signal, peaks
@@ -68,7 +74,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'mitdb_201'
+    database_name = 'nstdb_118e00'
 
     # set to true if you wish to generate a debug file
     file_debug = True

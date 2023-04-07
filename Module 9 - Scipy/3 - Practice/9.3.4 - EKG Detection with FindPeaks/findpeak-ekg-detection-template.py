@@ -10,7 +10,7 @@ Step 1: Load pre-processed data that has already been filtered through the PT pr
 available_datasets = ["mitdb_201", "mitdb213", "mitdb219", "nstdb_118e00", "qtdb_118e06"]
 
 # select a data set from the enumerated list above
-dataset = available_datasets[0]
+dataset = available_datasets[3]
 
 # load saved data from numpy array
 filepath = '../../../data/ekg/processed_'+dataset+'.npy'
@@ -23,7 +23,7 @@ Step 2: Determine how much data to use...
 """
 # If you wish to only run on ~10s of data uncomment the line below
 # if you wish to run on all data, comment out this line
-signal = signal[0:3300]
+#signal = signal[0:3300]
 
 """
 Step 3: Attempt simple thresholding with timeout to detect the signal
