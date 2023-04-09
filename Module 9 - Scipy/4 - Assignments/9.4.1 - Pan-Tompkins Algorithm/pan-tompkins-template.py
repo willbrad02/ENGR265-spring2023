@@ -25,19 +25,19 @@ def main(filepath):
     # Finding sample frequency
     sample_freq = 1 / time[1]
 
-    # bpm to Hz
-    high_bps = 200 / 60
+    # Lowpass cutoff frequency (Hz)
+    lcf = 11
 
-    # bpm to Hz
-    low_bps = 40 / 60
+    # Highpass cutoff frequency (Hz)
+    hcf = 5
 
     # pass data through LOW PASS FILTER (OPTIONAL)
-    b, a = butter(N=1, Wn=high_bps, btype='lowpass', output='ba', fs=sample_freq)
+    b, a = butter(N=1, Wn=lcf, btype='lowpass', output='ba', fs=sample_freq)
     signal = filtfilt(b, a, signal)
     #signal = np.convolve(signal, a)
 
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
-    b2, a2 = butter(N=1, Wn=low_bps, btype='highpass', output='ba', fs=sample_freq)
+    b2, a2 = butter(N=1, Wn=hcf, btype='highpass', output='ba', fs=sample_freq)
     signal = filtfilt(b2, a2, signal)
     #signal = np.convolve(signal, a2)
 
@@ -47,14 +47,18 @@ def main(filepath):
     # pass data through square function
     signal = np.square(signal)
 
-    # pass through moving average window
+    # create a moving average window of length 15% of sample rate
     window = []
-    window_length = 50
+    window_length = int(sample_freq * .15)
 
     for i in range(1, window_length + 1):
         window.append(int(i / i))
 
+    # pass through moving average window
     signal = np.convolve(signal, window)
+
+    # Implementing adaptive threshold
+
 
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
@@ -74,7 +78,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'nstdb_118e00'
+    database_name = 'mitdb_201'
 
     # set to true if you wish to generate a debug file
     file_debug = True
