@@ -39,6 +39,13 @@ def main(filepath):
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
     b2, a2 = butter(N=1, Wn=hcf, btype='highpass', output='ba', fs=sample_freq)
     signal = filtfilt(b2, a2, signal)
+
+    # Filter again
+    #signal = filtfilt(b, a, signal)
+    signal = filtfilt(b2, a2, signal)
+
+    #Multiply by scalar to make threshold easier
+    signal *= 10
     #signal = np.convolve(signal, a2)
 
     # pass data through differentiator
@@ -47,9 +54,12 @@ def main(filepath):
     # pass data through square function
     signal = np.square(signal)
 
+    # Square again to amplify noise/signal delta
+    #signal = np.square(signal)
+
     # create a moving average window of length 15% of sample rate
     window = []
-    window_length = int(sample_freq * .15)
+    window_length = int(sample_freq * .1)
 
     for i in range(1, window_length + 1):
         window.append(int(i / i))
@@ -57,15 +67,44 @@ def main(filepath):
     # pass through moving average window
     signal = np.convolve(signal, window)
 
-    # Implementing adaptive threshold
-
-
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
 
     ## your code here peaks,_ = find_peaks(....)
+    # current solution: height=.0002, distance=175
+    #peaks, _ = find_peaks(signal, height=.02, distance=100)
 
-    peaks, _ = find_peaks(signal, height=.0002, distance=175)
+    # Finding possible peaks
+    possible_peaks, _ = find_peaks(signal, distance=125)
+
+    # Initialize signal peak, noise peak, and threshold
+    spk = signal[possible_peaks[0]]
+    npk = .1 * spk
+    threshold1 = npk + (.25 * (spk - npk))
+    threshold2 = .5 * threshold1
+
+    # Placeholder for real peaks
+    peaks = []
+
+    # Identifying real peaks
+    for i in range(len(possible_peaks)):
+
+        if possible_peaks[i] - possible_peaks[i-1] >= 300:
+            if signal[possible_peaks[i]] > threshold2:
+                spk = .25 * signal[possible_peaks[i]] + .75 * spk
+                peaks.append(possible_peaks[i])
+
+        elif signal[possible_peaks[i]] > threshold1:
+            spk = (.125 * signal[possible_peaks[i]]) + (.875 * spk)
+            peaks.append(possible_peaks[i])
+
+        else:
+            npk = (.125 * signal[possible_peaks[i]]) + (.875 * npk)
+
+        threshold1 = npk + (.25 * (spk - npk))
+        threshold2 = .5 * threshold1
+
+    peaks = np.asarray(peaks)
 
     # do not modify this line
     return signal, peaks
@@ -78,7 +117,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'mitdb_201'
+    database_name = 'qtdb_sel104'
 
     # set to true if you wish to generate a debug file
     file_debug = True
