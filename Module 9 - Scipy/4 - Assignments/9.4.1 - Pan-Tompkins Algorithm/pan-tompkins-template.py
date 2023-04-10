@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import find_peaks, butter, filtfilt
+from scipy.signal import find_peaks, butter, filtfilt, cheby1
 
 from ekg_testbench import EKGTestBench
 
@@ -26,10 +26,20 @@ def main(filepath):
     sample_freq = 1 / time[1]
 
     # Lowpass cutoff frequency (Hz)
-    lcf = 11
+    lcf = 10
 
     # Highpass cutoff frequency (Hz)
-    hcf = 5
+    hcf = 6
+
+    # Cheby filtering
+    '''b, a = cheby1(N=2, rp=2, Wn=lcf, btype='lowpass', output='ba', fs=sample_freq)
+    signal = filtfilt(b, a, signal)
+    #signal = np.convolve(signal, sos)
+
+    # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
+    b2, a2 = cheby1(N=1, rp=2, Wn=hcf, btype='highpass', output='ba', fs=sample_freq)
+    signal = filtfilt(b2, a2, signal)
+    #signal = np.convolve(signal, sos2)'''
 
     # pass data through LOW PASS FILTER (OPTIONAL)
     b, a = butter(N=1, Wn=lcf, btype='lowpass', output='ba', fs=sample_freq)
@@ -44,8 +54,9 @@ def main(filepath):
     #signal = filtfilt(b, a, signal)
     signal = filtfilt(b2, a2, signal)
 
+
     #Multiply by scalar to make threshold easier
-    signal *= 10
+    #signal *= 10
     #signal = np.convolve(signal, a2)
 
     # pass data through differentiator
@@ -59,7 +70,7 @@ def main(filepath):
 
     # create a moving average window of length 15% of sample rate
     window = []
-    window_length = int(sample_freq * .1)
+    window_length = int(sample_freq * .15)
 
     for i in range(1, window_length + 1):
         window.append(int(i / i))
@@ -72,10 +83,10 @@ def main(filepath):
 
     ## your code here peaks,_ = find_peaks(....)
     # current solution: height=.0002, distance=175
-    #peaks, _ = find_peaks(signal, height=.02, distance=100)
+    peaks, _ = find_peaks(signal, height=.0002, distance=150)
 
     # Finding possible peaks
-    possible_peaks, _ = find_peaks(signal, distance=125)
+    '''possible_peaks, _ = find_peaks(signal, distance=140)
 
     # Initialize signal peak, noise peak, and threshold
     spk = signal[possible_peaks[0]]
@@ -104,7 +115,7 @@ def main(filepath):
         threshold1 = npk + (.25 * (spk - npk))
         threshold2 = .5 * threshold1
 
-    peaks = np.asarray(peaks)
+    peaks = np.asarray(peaks)'''
 
     # do not modify this line
     return signal, peaks
@@ -117,7 +128,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # database name
-    database_name = 'qtdb_sel104'
+    database_name = 'nstdb_118e00'
 
     # set to true if you wish to generate a debug file
     file_debug = True
