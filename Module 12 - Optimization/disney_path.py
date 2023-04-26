@@ -32,9 +32,10 @@ for y in range(0, 40):
 toggle = True
 
 while toggle:
-    # User chooses starting location (I don't think this will work if the user inputs an apostrophe or period or anything of the sorts
+    # User chooses starting location (works with apostrophes)
     first_attr_name = None
     name_to_add = input('Enter a part of or the entire name of the desired starting attraction: ')
+    stripped_string = ''.join(name_to_add.lower().strip().split("'"))
 
     # Makes lists of attraction names
     attr_name_list = [attr.get_attraction_name() for attr in db.get_attractions_list()]
@@ -46,7 +47,7 @@ while toggle:
 
     # Check if entered name is an attraction
     for attr_name in attr_name_list_lower:
-        if name_to_add.lower() in attr_name:
+        if stripped_string in attr_name:
             first_attr_name = attr_name
             attr_counter += 1
             searched_attr_list.append(attr_name.title())
@@ -55,11 +56,12 @@ while toggle:
     if attr_counter == 1:
         toggle = False
     elif first_attr_name is None:
-        print(f'\nERROR: Invalid attraction name. Enter one of the following attraction names:\n{attr_name_list}')
+        print(f'\nERROR: Invalid attraction name. Either the entered name includes \
+unsupported punctuation or the name does not exist. Enter one of the following attraction names:\n{attr_name_list}\n')
         continue
     else:
-        print(f'\nERROR: Multiple attractions found with the entered name.\
-        Did you mean one of these attractions?:\n{searched_attr_list}')
+        print(f'\nERROR: Multiple attractions found with the name "{stripped_string}". \
+Did you mean one of these?:\n{searched_attr_list}\n')
         continue
 
 # Choose next attraction purely by distance
