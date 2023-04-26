@@ -28,7 +28,7 @@ for y in range(0, 40):
         else:
             all_distances[x][y] = db.get_attraction_distance(id1=x, id2=y)
 
-# User chooses starting location
+# User chooses starting location (I don't think this will work if the user inputs an apostrophe or period or anything of the sorts
 first_attr_name = None
 name_to_add = input('Enter a part of or the entire name of the desired starting attraction: ')
 
