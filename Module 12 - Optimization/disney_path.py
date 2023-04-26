@@ -1,6 +1,6 @@
 """Find the optimum path through Disney World's Magic Kingdom based on distance between all attractions.
 
-Authors: Will Bradford and Zach Kreitzer
+Authors: Will Bradford with help from Zach Kreitzer
 Version: 4-26-23
 
 Assumptions: A .json file of all point-of-interest (POI) names and a .json file of distances between all
@@ -17,12 +17,12 @@ if __name__ == "__main__":
     db = TSPDatabase()
 
     # Create a list of all distances
-    first_idx = np.arange(0,40)
-    second_idx = np.arange(0,40)
+    first_idx = np.arange(0, 40)
+    second_idx = np.arange(0, 40)
 
     with open('distances.json') as file:
         distances = json.load(file)
-        all_distance_values = [distances[str(i) + ',' + str(j)] for i in first_idx for j in second_idx if i != j]
+        all_distance_values = [distances[f'{i},{j}'] for i in first_idx for j in second_idx if i != j]
 
     # Make numpy array for all distances
     all_distances = np.diag(np.zeros(40))
