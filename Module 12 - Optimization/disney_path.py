@@ -56,12 +56,13 @@ while toggle:
     if attr_counter == 1:
         toggle = False
     elif first_attr_name is None:
-        print(f'\nERROR: Invalid attraction name. Either the entered name includes \
-unsupported punctuation or the name does not exist. Enter one of the following attraction names:\n{attr_name_list}\n')
+        print(f'\nERROR: Invalid attraction name. Either the entered name includes unsupported punctuation, \
+is misspelled, or there is no attraction associated with the entered name.\n\nEnter a part of or the entire \
+name of one of the following attraction names:\n{attr_name_list}\n')
         continue
     else:
-        print(f'\nERROR: Multiple attractions found with the name "{stripped_string}". \
-Did you mean one of these?:\n{searched_attr_list}\n')
+        print(f'\nERROR: Multiple attractions found with the name "{stripped_string}".\
+\n\nDid you mean one of these?:\n{searched_attr_list}\n')
         continue
 
 # Choose next attraction purely by distance
