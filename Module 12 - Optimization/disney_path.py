@@ -40,10 +40,11 @@ if __name__ == "__main__":
 
     while toggle:
 
-        # User chooses starting location (works with apostrophes)
+        # User chooses starting attraction (program ignores apostrophes, leading/trailing whitespace, and
+        # capitalization, but end-of-line punctuation should not be passed)
         first_attr_name = None
-        name_to_add = input('Enter either a part or the entire name of the desired starting attraction: ')
-        stripped_string = ''.join(name_to_add.lower().strip().split("'"))
+        name_to_search = input('Enter either a part or the entire name of the desired starting attraction: ')
+        stripped_string = ''.join(name_to_search.lower().strip().split("'"))
 
         # Make lists of attraction names
         attr_name_list = [attr.get_attraction_name() for attr in db.get_attractions_list()]
