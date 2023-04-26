@@ -10,6 +10,9 @@ class Attraction:
         self.name = _name
         self.id = _id
 
+    def get_attraction_name(self):
+        return self.name
+
 
 class TSPDatabase:
 
@@ -63,7 +66,7 @@ class TSPDatabase:
         return max(distance_ij, distance_ji, 30)
 
     # return the name of an attraction as a string when specified by an attraction ID (int)
-    def get_attraction_name(self, id: int):
+    def get_attraction_name_by_id(self, id: int):
         return self.get_attraction_by_id(id).name
 
     # return an Attraction object for a provided attraction ID (int)
