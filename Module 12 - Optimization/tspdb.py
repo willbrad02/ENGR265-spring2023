@@ -75,3 +75,10 @@ class TSPDatabase:
             if attr.id == id:
                 return attr
         return None
+
+    # Return attraction object associated with given name
+    def get_attraction_by_name(self, name: str):
+        for attr in TSPDatabase.attractions:
+            if attr.name.lower() == name.lower():
+                return attr
+        return None
