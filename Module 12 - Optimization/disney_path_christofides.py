@@ -124,7 +124,7 @@ if __name__ == "__main__":
     first_attr = db.get_attraction_by_name(first_attr_name)
     first_attr_id = first_attr.id
 
-    # Pixel coordinates of each attraction: (x, y)
+    # Pixel coordinates of each attraction on the park map: (x, y)
     attraction_coordinates = [80.43, 667.25,
                               1001.09, 656.34,
                               120.65, 415.39,
