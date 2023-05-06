@@ -11,28 +11,18 @@ from colorama import Fore
 def run_christofides_algorithm(graph, starting_node=0):
     """
     Christofides TSP algorithm
-    http://www.dtic.mil/dtic/tr/fulltext/u2/a025602.pdf
-    Args:
-        graph: 2d numpy array matrix
-        starting_node: of the TSP
-    Returns:
-        tour given by christofides TSP algorithm
 
-    Examples:
-        #>>> import numpy as np
-        #>>> graph = np.array([[  0, 300, 250, 190, 230],
-        #>>>                   [300,   0, 230, 330, 150],
-        #>>>                   [250, 230,   0, 240, 120],
-        #>>>                   [190, 330, 240,   0, 220],
-        #>>>                   [230, 150, 120, 220,   0]])
-        #>>> christofides_tsp(graph)
+    http://matejgazda.com/christofides-algorithm-in-python/
+
+    :param graph: A 2D, hollow, symmetric numpy array matrix
+    :param starting_node: Starting node of the TSP
+    :return: Path given by Christofides TSP algorithm
     """
-
     # Minimal spanning tree (Connect all nodes to at least one other, based on distance)
     mst = minimal_spanning_tree(graph, 'Prim', starting_node=0)
 
-    # Save nodes that have an odd number of connections
-    odd_degree_nodes = list(_get_odd_degree_vertices(mst))
+    # Find all odd degree nodes
+    odd_degree_nodes = [index for index, row in enumerate(mst) if len(np.nonzero(row)[0]) % 2 != 0]
     odd_degree_nodes_ix = np.ix_(odd_degree_nodes, odd_degree_nodes)
     nx_graph = nx.from_numpy_array(-1 * graph[odd_degree_nodes_ix])
 
@@ -52,27 +42,11 @@ def run_christofides_algorithm(graph, starting_node=0):
     path = list(itertools.chain.from_iterable(euler_tour))
 
     # Eliminate duplicate nodes in the path
-    final_path = _remove_repeated_vertices(path, starting_node)[:-1]
-
-    return final_path
-
-
-def _get_odd_degree_vertices(graph):
-    """
-    Finds all the odd degree vertices in graph
-
-    :param graph: 2D numpy array as adj. matrix
-    :return: Set of vertices that have odd degree
-    """
-    odd_degree_vertices = {index for index, row in enumerate(graph) if len(np.nonzero(row)[0]) % 2 != 0}
-
-    return odd_degree_vertices
-
-
-def _remove_repeated_vertices(path, starting_node):
     path = list(dict.fromkeys(path).keys())
     path.append(starting_node)
-    return path
+    final_path = path[:-1]
+
+    return final_path
 
 
 if __name__ == "__main__":
@@ -88,6 +62,7 @@ if __name__ == "__main__":
     toggle = True
     print_counter = 0
 
+    # User decides which attraction to start at
     while toggle:
 
         first_attr_name = None
@@ -145,7 +120,7 @@ if __name__ == "__main__":
                                          'unsupported punctuation, is misspelled, or there is no '
                                          'attraction associated with the entered name.\n')
 
-    # Get first attraction and id
+    # Get first attraction object and id
     first_attr = db.get_attraction_by_name(first_attr_name)
     first_attr_id = first_attr.id
 
