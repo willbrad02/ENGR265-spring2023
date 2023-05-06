@@ -44,6 +44,8 @@ def run_christofides_algorithm(graph, starting_node=0):
     # Eliminate duplicate nodes in the path
     path = list(dict.fromkeys(path).keys())
     path.append(starting_node)
+
+    # Slicing to remove beginning node from end of path. Remove slicing to create full loop
     final_path = path[:-1]
 
     return final_path
