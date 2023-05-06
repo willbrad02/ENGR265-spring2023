@@ -133,12 +133,8 @@ if __name__ == "__main__":
 
         # Multiple attractions associated with input
         elif len(searched_attr_list) > 1:
-            print(f'''
-ERROR: Multiple attractions found that include "{stripped_input}".
-
-Did you mean one of these?:
-{searched_attr_list}
-''')
+            print(f'ERROR: Multiple attractions found that include "{stripped_input}". Did you mean one of these?:'
+                  f'\n{searched_attr_list}\n')
 
         # Input is invalid
         else:
