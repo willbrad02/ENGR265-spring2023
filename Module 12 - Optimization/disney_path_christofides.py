@@ -10,7 +10,6 @@ import numpy as np
 from tspdb import TSPDatabase
 
 
-# def choose_starting_location(user_input)
 def run_christofides_algorithm(graph, starting_node=0):
     """
     Christofides TSP algorithm
@@ -223,4 +222,4 @@ Did you mean one of these?:
     # Run christofides algorithm (guaranteed to be no longer than 3/2 of the optimal path)
     recommended_path = run_christofides_algorithm(all_pixel_distances, first_attr_id)
 
-    print(recommended_path)
+    print(f'It is recommended that you visit attractions in the following order:\n{recommended_path}')
