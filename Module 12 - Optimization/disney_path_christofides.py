@@ -69,10 +69,8 @@ def _get_odd_degree_vertices(graph):
     Returns:
     Set of vertices that have odd degree
     """
-    odd_degree_vertices = set()
-    for index, row in enumerate(graph):
-        if len(np.nonzero(row)[0]) % 2 != 0:
-            odd_degree_vertices.add(index)
+    odd_degree_vertices = {index for index, row in enumerate(graph) if len(np.nonzero(row)[0]) % 2 != 0}
+
     return odd_degree_vertices
 
 
@@ -87,53 +85,72 @@ if __name__ == "__main__":
     # Instantiate database
     db = TSPDatabase()
 
+    # Make lists of attraction names
+    attr_name_list = [attr.get_attraction_name() for attr in db.get_attractions_list()]
+    attr_name_list_lower = [attr.get_attraction_name().lower() for attr in db.get_attractions_list()]
+
     # Toggle variable for while loop
     toggle = True
+    print_counter = 0
 
     while toggle:
 
         # User chooses starting attraction (program ignores apostrophes, leading/trailing whitespace, and
         # capitalization, but end-of-line punctuation should not be passed)
         first_attr_name = None
-        name_to_search = input('Enter either a part or the entire name of the desired starting attraction.\n'
-                               'Press ENTER to start at the front of the park.:\n ')
-        stripped_string = ''.join(name_to_search.lower().strip().split("'"))
 
-        # Make lists of attraction names
-        attr_name_list = [attr.get_attraction_name() for attr in db.get_attractions_list()]
-        attr_name_list_lower = [attr.get_attraction_name().lower() for attr in db.get_attractions_list()]
+        # Print IDs and names for user to choose from
+        if print_counter == 0:
+
+            print('ID: Name')
+            for attr in db.get_attractions_list():
+                print(f'{attr.id}: {attr.get_attraction_name()}')
+
+            # Only print on first loop
+            print_counter +=1
+
+        name_to_search = input('\nEnter one of the above attraction IDs or at least a portion '
+                               'of the attraction\'s name that you would like to start at. '
+                               'Press ENTER to start at the front of the park.:\n')
+        stripped_input = ''.join(name_to_search.lower().strip().split("'"))
 
         # List storing all attraction names that match/include the entered string
-        searched_attr_list = [attr_name.title() for attr_name in attr_name_list_lower if stripped_string in attr_name]
+        searched_attr_list = [attr_name.title() for attr_name in attr_name_list_lower if stripped_input in attr_name]
 
-        # If at least one attraction is found, update the name of the first visited attraction
-        if searched_attr_list and stripped_string != '':
-            first_attr_name = searched_attr_list[0]
-
-        # Check if attraction is valid
-        if len(searched_attr_list) == 1:
+        # Choose starting location from inputted id, must be valid id
+        if stripped_input.isdigit() and 0 <= int(stripped_input) <= 39:
+            first_attr_name = db.get_attraction_name_by_id(int(stripped_input))
             toggle = False
 
-        elif stripped_string == '':
+        # Start at front of park
+        elif stripped_input == '':
             first_attr_name = db.get_attraction_name_by_id(36)
             toggle = False
 
-        elif first_attr_name is None:
+        # Check number of attractions associated with input
+        elif len(searched_attr_list) == 1:
+            first_attr_name = searched_attr_list[0]
+            toggle = False
+
+        # Multiple attractions associated with input
+        elif len(searched_attr_list) > 1:
             print(f'''
-    ERROR: Invalid attraction name. Either the entered name includes unsupported punctuation, is misspelled, or there is \
-    no attraction associated with the entered name.
+ERROR: Multiple attractions found that include "{stripped_input}".
 
-    Enter either a part or the entire name of one of the following attraction names:
-    {attr_name_list}
-    ''')
+Did you mean one of these?:
+{searched_attr_list}
+''')
 
+        # Input is invalid
         else:
-            print(f'''
-    ERROR: Multiple attractions found that include "{stripped_string}".
+            # If input is an id
+            if stripped_input.strip('-').isdigit():
+                print('\nERROR: Attraction ID out of range. Valid IDs are 0-39.\n')
 
-    Did you mean one of these?:
-    {searched_attr_list}
-    ''')
+            # If input is a name
+            else:
+                print('\nERROR: Invalid attraction name. Either the entered name includes unsupported punctuation, '
+                      'is misspelled, or there is no attraction associated with the entered name.\n')
 
     # Get first attraction and id
     first_attr = db.get_attraction_by_name(first_attr_name)
@@ -181,9 +198,9 @@ if __name__ == "__main__":
                               989.13, 722.85,
                               254.35,  698.86]
 
+    # Split pixel coordinates into x and y
     x_coordinates, y_coordinates = [], []
 
-    # Split pixel coordinates into x and y
     for i in attraction_coordinates:
         if len(x_coordinates) <= len(y_coordinates):
             x_coordinates.append(i)
