@@ -1,13 +1,11 @@
 import itertools
-
 import networkx as nx
 from networkx.algorithms.matching import max_weight_matching
 from networkx.algorithms.euler import eulerian_circuit
-
 from pytsp.utils import minimal_spanning_tree
-
 import numpy as np
 from tspdb import TSPDatabase
+from colorama import Fore
 
 
 def run_christofides_algorithm(graph, starting_node=0):
@@ -62,11 +60,9 @@ def run_christofides_algorithm(graph, starting_node=0):
 def _get_odd_degree_vertices(graph):
     """
     Finds all the odd degree vertices in graph
-    Args:
-        graph: 2d np array as adj. matrix
 
-    Returns:
-    Set of vertices that have odd degree
+    :param graph: 2D numpy array as adj. matrix
+    :return: Set of vertices that have odd degree
     """
     odd_degree_vertices = {index for index, row in enumerate(graph) if len(np.nonzero(row)[0]) % 2 != 0}
 
@@ -94,21 +90,21 @@ if __name__ == "__main__":
 
     while toggle:
 
-        # User chooses starting attraction (program ignores apostrophes, leading/trailing whitespace, and
-        # capitalization, but end-of-line punctuation should not be passed)
         first_attr_name = None
 
         # Print IDs and names for user to choose from
         if print_counter == 0:
 
-            print('ID: Name')
+            print(Fore.LIGHTBLUE_EX + 'ID: Name' + Fore.RESET)
             for attr in db.get_attractions_list():
-                print(f'{attr.id}: {attr.get_attraction_name()}')
+                print(f'{attr.id:02d}: {attr.get_attraction_name()}')
 
             # Only print on first loop
             print_counter +=1
 
-        name_to_search = input('\nEnter one of the above attraction IDs or at least a portion '
+        # User chooses starting attraction (program ignores apostrophes, leading/trailing whitespace, and
+        # capitalization, but end-of-line punctuation should not be passed)
+        name_to_search = input(Fore.RESET + '\nEnter one of the above attraction IDs or at least a portion '
                                'of the attraction\'s name that you would like to start at. '
                                'Press ENTER to start at the front of the park.:\n')
         stripped_input = ''.join(name_to_search.lower().strip().split("'"))
@@ -133,19 +129,21 @@ if __name__ == "__main__":
 
         # Multiple attractions associated with input
         elif len(searched_attr_list) > 1:
-            print(f'ERROR: Multiple attractions found that include "{stripped_input}". Did you mean one of these?:'
-                  f'\n{searched_attr_list}\n')
+            print(Fore.LIGHTRED_EX + f'\nERROR: Multiple attractions found that include "{stripped_input}".'
+                                     f'\n{Fore.RESET}Did you mean one of these?:\n{searched_attr_list}\n')
 
         # Input is invalid
         else:
             # If input is an id
-            if stripped_input.strip('-').isdigit():
-                print('\nERROR: Attraction ID out of range. Valid IDs are 0-39.\n')
+            if stripped_input.strip('-.').isnumeric() or \
+                    (''.join(stripped_input.lower().strip('-').split(".")).isnumeric() and '.' in stripped_input):
+                print(Fore.LIGHTRED_EX + '\nERROR: Invalid attraction ID. Valid IDs are integers from 0-39.\n')
 
             # If input is a name
             else:
-                print('\nERROR: Invalid attraction name. Either the entered name includes unsupported punctuation, '
-                      'is misspelled, or there is no attraction associated with the entered name.\n')
+                print(Fore.LIGHTRED_EX + '\nERROR: Invalid attraction name. Either the entered name includes '
+                                         'unsupported punctuation, is misspelled, or there is no '
+                                         'attraction associated with the entered name.\n')
 
     # Get first attraction and id
     first_attr = db.get_attraction_by_name(first_attr_name)
@@ -218,4 +216,4 @@ if __name__ == "__main__":
     # Run christofides algorithm (guaranteed to be no longer than 3/2 of the optimal path)
     recommended_path = run_christofides_algorithm(all_pixel_distances, first_attr_id)
 
-    print(f'It is recommended that you visit attractions in the following order:\n{recommended_path}')
+    print(f'\nIt is recommended that you visit attractions in the following order:\n{recommended_path}')
