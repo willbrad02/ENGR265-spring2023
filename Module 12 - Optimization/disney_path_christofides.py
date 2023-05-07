@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from pytsp.data_structures.opt_case import OptCase
 
-
 def get_pixel_distances(attr_coordinates):
     """
     Get distances between attractions based off of pixel coordinates
@@ -86,7 +85,7 @@ def run_christofides_algorithm(graph, starting_attr=0):
 
     return final_path
 
-'''
+
 def get_solution_cost_change(graph, route, case, i, j, k):
     """ Compare current solution with 7 possible 3-opt moves"""
     A, B, C, D, E, F = route[i - 1], route[i], route[j - 1], route[j], route[k - 1], route[k % len(route)]
@@ -115,91 +114,102 @@ def get_solution_cost_change(graph, route, case, i, j, k):
         # A'B'C
         return graph[A, B] + graph[C, D] + graph[E, F] - (graph[A, D] + graph[C, F] + graph[B, E])
 
+
 def reverse_segments(route, case, i, j, k):
     """
-    Create a new tour from the existing tour
-    Args:
-        route: existing tour
-        case: which case of opt swaps should be used
-        i:
-        j:
-        k:
-    Returns:
-        new route
+    Create a new path from an existing path
+
+    :param route: Existing path
+    :param case: Which case of opt swaps should be used
+    :param i:
+    :param j:
+    :param k:
+    :return: Improved path
     """
     if (i - 1) < (k % len(route)):
         first_segment = route[k% len(route):] + route[:i]
+
     else:
         first_segment = route[k % len(route):i]
+
     second_segment = route[i:j]
     third_segment = route[j:k]
 
+    # first case is the current solution ABC
     if case == OptCase.opt_case_1:
-        # first case is the current solution ABC
         pass
+
     elif case == OptCase.opt_case_2:
         # A'BC
         solution = list(reversed(first_segment)) + second_segment + third_segment
+
     elif case == OptCase.opt_case_3:
         # ABC'
         solution = first_segment + second_segment + list(reversed(third_segment))
+
     elif case == OptCase.opt_case_4:
         # A'BC'
         solution = list(reversed(first_segment)) + second_segment + list(reversed(third_segment))
+
     elif case == OptCase.opt_case_5:
         # A'B'C
         solution = list(reversed(first_segment)) + list(reversed(second_segment)) + third_segment
+
     elif case == OptCase.opt_case_6:
         # AB'C
         solution = first_segment + list(reversed(second_segment)) + third_segment
+
     elif case == OptCase.opt_case_7:
         # AB'C'
         solution = first_segment + list(reversed(second_segment)) + list(reversed(third_segment))
+
     elif case == OptCase.opt_case_8:
         # A'B'C
         solution = list(reversed(first_segment)) + list(reversed(second_segment)) + list(reversed(third_segment))
+
     return solution
+
+
 def tsp_3_opt(graph, route):
     """
     Approximate the optimal path of travelling salesman according to 3-opt algorithm
-    Args:
-        graph:  2d numpy array as graph
-        route: route as ordered list of visited nodes. if no route is given, christofides algorithm is used to create one.
-    Returns:
-        optimal path according to 3-opt algorithm
-    Examples:
+
+    :param graph: 2D numpy array as graph
+    :param route: Route as ordered list of visited attractions
+    :return: Optimal path according to 3-opt algorithm
     """
-    # Deleted option for no route since there will always be a route
-
-
     moves_cost = {OptCase.opt_case_1: 0, OptCase.opt_case_2: 0,
                   OptCase.opt_case_3: 0, OptCase.opt_case_4: 0, OptCase.opt_case_5: 0,
                   OptCase.opt_case_6: 0, OptCase.opt_case_7: 0, OptCase.opt_case_8: 0}
+
     improved = True
     best_found_route = route
+
     while improved:
         improved = False
+
         for (i, j, k) in possible_segments(len(graph)):
-            # we check all the possible moves and save the result into the dict
+
+            # Check all the possible moves and save the result into the dict
             for opt_case in OptCase:
                 moves_cost[opt_case] = get_solution_cost_change(graph, best_found_route, opt_case, i, j, k)
-            # we need the minimum value of substraction of old route - new route
+
+            # Minimum value of subtraction of old route - new route
             best_return = max(moves_cost, key=moves_cost.get)
             if moves_cost[best_return] > 0:
                 best_found_route = reverse_segments(best_found_route, best_return, i, j, k)
                 improved = True
                 break
-    # just to start with the same node -> we will need to cycle the results.
-    # cycled = itertools.cycle(best_found_route)
-    # skipped = itertools.dropwhile(lambda x: x != 0, cycled)
-    # sliced = itertools.islice(skipped, None, len(best_found_route))
-    # best_found_route = list(sliced)
+
     return best_found_route
+
+
 def possible_segments(N):
     """ Generate the combination of segments """
     segments = ((i, j, k) for i in range(N) for j in range(i + 2, N-1) for k in range(j + 2, N - 1 + (i > 0)))
+
     return segments
-'''
+
 
 def plot_fastest_route(path_list, image):
     """
@@ -372,15 +382,18 @@ if __name__ == "__main__":
     # Run christofides algorithm (guaranteed to be no longer than 3/2 of the optimal path)
     chris_path = run_christofides_algorithm(attr_pixel_distances, first_attr_id)
 
+    '''# Print and plot Christofides path
     print(f'\nIt is recommended that you visit attractions in the following order:\n{chris_path}')
+    plot_fastest_route(chris_path, image_name)'''
 
-    # Plot path on the image
-    plot_fastest_route(chris_path, image_name)
+    # Improve path using 3-opt algorithm
+    improved_path = tsp_3_opt(attr_pixel_distances, chris_path)
 
-    '''# Improve path using 3-opt algorithm
-    recommended_path = tsp_3_opt(attr_pixel_distances, chris_path)
+    # Shift improved path to start at the correct attraction
+    shift_val = improved_path.index(chris_path[0])
+    path_array = np.array(improved_path)
+    recommended_path = list(np.roll(path_array, - shift_val))
 
+    # Print and plot 3-opt path
     print(f'\nIt is recommended that you visit attractions in the following order:\n{recommended_path}')
-
-    # Plot path on the image
-    plot_fastest_route(recommended_path, image_name)'''
+    plot_fastest_route(recommended_path, image_name)
