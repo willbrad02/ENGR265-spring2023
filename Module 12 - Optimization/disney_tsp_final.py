@@ -1,14 +1,26 @@
-import itertools
-import networkx as nx
-from networkx.algorithms.matching import max_weight_matching
-from networkx.algorithms.euler import eulerian_circuit
-from pytsp.utils import minimal_spanning_tree
-import numpy as np
-from tspdb import TSPDatabase
+"""Find the optimum path through Disney World's Magic Kingdom using Christofides algorithm and a 3-opt algorithm.
+
+Authors: Will Bradford, Zack Kreitzer, Alex Kreitzer
+Version: 5-7-23
+
+Assumptions: A .json file of all point-of-interest (POI) names and a .json file of distances between all
+             POIs, as the crow flies, are given.
+
+References: http://matejgazda.com/christofides-algorithm-in-python/
+
+"""
 from colorama import Fore
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from pytsp.data_structures.opt_case import OptCase
+from networkx.algorithms.euler import eulerian_circuit
+from networkx.algorithms.matching import max_weight_matching
+from pytsp.utils import minimal_spanning_tree
+from tspdb import TSPDatabase
+import itertools
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+
 
 def get_pixel_distances(attr_coordinates):
     """
@@ -46,8 +58,6 @@ def get_pixel_distances(attr_coordinates):
 def run_christofides_algorithm(graph, starting_attr=0):
     """
     Christofides TSP algorithm
-
-    http://matejgazda.com/christofides-algorithm-in-python/
 
     :param graph: A 2D, hollow, symmetric numpy array matrix
     :param starting_attr: Starting attraction of the TSP
