@@ -6,49 +6,244 @@ from pytsp.utils import minimal_spanning_tree
 import numpy as np
 from tspdb import TSPDatabase
 from colorama import Fore
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from pytsp.data_structures.opt_case import OptCase
 
 
-def run_christofides_algorithm(graph, starting_node=0):
+def get_pixel_distances(attr_coordinates):
+    """
+    Get distances between attractions based off of pixel coordinates
+
+    :param attr_coordinates: List of attraction pixel coordinates in image [x, y, x, y, x, y, ... ]
+    :return: Hollow, symmetric, 2D numpy array of attraction pixel coordinates
+    """
+    # Split pixel coordinates into x and y
+    global x_coordinates, y_coordinates
+    x_coordinates, y_coordinates = [], []
+
+    for coord in attr_coordinates:
+        if len(x_coordinates) <= len(y_coordinates):
+            x_coordinates.append(coord)
+        else:
+            y_coordinates.append(coord)
+
+    # Create symmetric array of attraction pixel distances
+    pixel_distances = np.diag(np.zeros(40))
+
+    for y in range(0, 40):
+        for x in range(0, 40):
+
+            if x == y:
+                pixel_distances[x][y] = 0
+
+            else:
+                pixel_distances[x][y] = (
+                    np.sqrt((x_coordinates[x] - x_coordinates[y]) ** 2 + (y_coordinates[x] - y_coordinates[y]) ** 2))
+
+    return pixel_distances
+
+
+def run_christofides_algorithm(graph, starting_attr=0):
     """
     Christofides TSP algorithm
 
     http://matejgazda.com/christofides-algorithm-in-python/
 
     :param graph: A 2D, hollow, symmetric numpy array matrix
-    :param starting_node: Starting node of the TSP
+    :param starting_attr: Starting attraction of the TSP
     :return: Path given by Christofides TSP algorithm
     """
-    # Minimal spanning tree (Connect all nodes to at least one other, based on distance)
+    # Minimal spanning tree (Connect all attractions to at least one other, based on distance)
     mst = minimal_spanning_tree(graph, 'Prim', starting_node=0)
 
-    # Find all odd degree nodes
-    odd_degree_nodes = [index for index, row in enumerate(mst) if len(np.nonzero(row)[0]) % 2 != 0]
-    odd_degree_nodes_ix = np.ix_(odd_degree_nodes, odd_degree_nodes)
-    nx_graph = nx.from_numpy_array(-1 * graph[odd_degree_nodes_ix])
+    # Find all odd degree attractions
+    odd_degree_attrs = [index for index, row in enumerate(mst) if len(np.nonzero(row)[0]) % 2 != 0]
+    odd_degree_attrs_ix = np.ix_(odd_degree_attrs, odd_degree_attrs)
+    nx_graph = nx.from_numpy_array(-1 * graph[odd_degree_attrs_ix])
 
     # Minimal-weight perfect matching
-    # (Create edges by matching all nodes to each other; edges have no common nodes)
+    # (Create edges by matching all attractions to each other; edges have no common attractions)
     matching = max_weight_matching(nx_graph, maxcardinality=True)
 
-    # Unite minimal-weight perfect matching and minimal spanning tree to create a graph where all nodes have an even
-    # number of connections (graph does not loop back on itself)
+    # Unite minimal-weight perfect matching and minimal spanning tree to create a graph where all attractions
+    # have an even number of connections (graph does not loop back on itself)
     euler_multigraph = nx.MultiGraph(mst)
     for edge in matching:
-        euler_multigraph.add_edge(odd_degree_nodes[edge[0]], odd_degree_nodes[edge[1]],
-                                  weight=graph[odd_degree_nodes[edge[0]]][odd_degree_nodes[edge[1]]])
+        euler_multigraph.add_edge(odd_degree_attrs[edge[0]], odd_degree_attrs[edge[1]],
+                                  weight=graph[odd_degree_attrs[edge[0]]][odd_degree_attrs[edge[1]]])
 
-    # Create an initial path along the previously created shape; nodes may appear more than once
-    euler_tour = list(eulerian_circuit(euler_multigraph, source=starting_node))
-    path = list(itertools.chain.from_iterable(euler_tour))
+    # Create an initial path along the previously created shape; attractions may appear more than once
+    euler_path = list(eulerian_circuit(euler_multigraph, source=starting_attr))
+    path = list(itertools.chain.from_iterable(euler_path))
 
     # Eliminate duplicate nodes in the path
     path = list(dict.fromkeys(path).keys())
-    path.append(starting_node)
+    path.append(starting_attr)
 
-    # Slicing to remove beginning node from end of path. Remove slicing to create full loop
+    # Slicing to remove beginning attraction from end of path. Remove slicing to create full loop
     final_path = path[:-1]
 
     return final_path
+
+'''
+def get_solution_cost_change(graph, route, case, i, j, k):
+    """ Compare current solution with 7 possible 3-opt moves"""
+    A, B, C, D, E, F = route[i - 1], route[i], route[j - 1], route[j], route[k - 1], route[k % len(route)]
+    if case == OptCase.opt_case_1:
+        # first case is the current solution ABC
+        return 0
+    elif case == OptCase.opt_case_2:
+        # second case is the case A'BC
+        return graph[A, B] + graph[E, F] - (graph[B, F] + graph[A, E])
+    elif case == OptCase.opt_case_3:
+        # ABC'
+        return graph[C, D] + graph[E, F] - (graph[D, F] + graph[C, E])
+    elif case == OptCase.opt_case_4:
+        # A'BC'
+        return graph[A, B] + graph[C, D] + graph[E, F] - (graph[A, D] + graph[B, F] + graph[E, C])
+    elif case == OptCase.opt_case_5:
+        # A'B'C
+        return graph[A, B] + graph[C, D] + graph[E, F] - (graph[C, F] + graph[B, D] + graph[E, A])
+    elif case == OptCase.opt_case_6:
+        # AB'C
+        return graph[B, A] + graph[D, C] - (graph[C, A] + graph[B, D])
+    elif case == OptCase.opt_case_7:
+        # AB'C'
+        return graph[A, B] + graph[C, D] + graph[E, F] - (graph[B, E] + graph[D, F] + graph[C, A])
+    elif case == OptCase.opt_case_8:
+        # A'B'C
+        return graph[A, B] + graph[C, D] + graph[E, F] - (graph[A, D] + graph[C, F] + graph[B, E])
+
+def reverse_segments(route, case, i, j, k):
+    """
+    Create a new tour from the existing tour
+    Args:
+        route: existing tour
+        case: which case of opt swaps should be used
+        i:
+        j:
+        k:
+    Returns:
+        new route
+    """
+    if (i - 1) < (k % len(route)):
+        first_segment = route[k% len(route):] + route[:i]
+    else:
+        first_segment = route[k % len(route):i]
+    second_segment = route[i:j]
+    third_segment = route[j:k]
+
+    if case == OptCase.opt_case_1:
+        # first case is the current solution ABC
+        pass
+    elif case == OptCase.opt_case_2:
+        # A'BC
+        solution = list(reversed(first_segment)) + second_segment + third_segment
+    elif case == OptCase.opt_case_3:
+        # ABC'
+        solution = first_segment + second_segment + list(reversed(third_segment))
+    elif case == OptCase.opt_case_4:
+        # A'BC'
+        solution = list(reversed(first_segment)) + second_segment + list(reversed(third_segment))
+    elif case == OptCase.opt_case_5:
+        # A'B'C
+        solution = list(reversed(first_segment)) + list(reversed(second_segment)) + third_segment
+    elif case == OptCase.opt_case_6:
+        # AB'C
+        solution = first_segment + list(reversed(second_segment)) + third_segment
+    elif case == OptCase.opt_case_7:
+        # AB'C'
+        solution = first_segment + list(reversed(second_segment)) + list(reversed(third_segment))
+    elif case == OptCase.opt_case_8:
+        # A'B'C
+        solution = list(reversed(first_segment)) + list(reversed(second_segment)) + list(reversed(third_segment))
+    return solution
+def tsp_3_opt(graph, route):
+    """
+    Approximate the optimal path of travelling salesman according to 3-opt algorithm
+    Args:
+        graph:  2d numpy array as graph
+        route: route as ordered list of visited nodes. if no route is given, christofides algorithm is used to create one.
+    Returns:
+        optimal path according to 3-opt algorithm
+    Examples:
+    """
+    # Deleted option for no route since there will always be a route
+
+
+    moves_cost = {OptCase.opt_case_1: 0, OptCase.opt_case_2: 0,
+                  OptCase.opt_case_3: 0, OptCase.opt_case_4: 0, OptCase.opt_case_5: 0,
+                  OptCase.opt_case_6: 0, OptCase.opt_case_7: 0, OptCase.opt_case_8: 0}
+    improved = True
+    best_found_route = route
+    while improved:
+        improved = False
+        for (i, j, k) in possible_segments(len(graph)):
+            # we check all the possible moves and save the result into the dict
+            for opt_case in OptCase:
+                moves_cost[opt_case] = get_solution_cost_change(graph, best_found_route, opt_case, i, j, k)
+            # we need the minimum value of substraction of old route - new route
+            best_return = max(moves_cost, key=moves_cost.get)
+            if moves_cost[best_return] > 0:
+                best_found_route = reverse_segments(best_found_route, best_return, i, j, k)
+                improved = True
+                break
+    # just to start with the same node -> we will need to cycle the results.
+    # cycled = itertools.cycle(best_found_route)
+    # skipped = itertools.dropwhile(lambda x: x != 0, cycled)
+    # sliced = itertools.islice(skipped, None, len(best_found_route))
+    # best_found_route = list(sliced)
+    return best_found_route
+def possible_segments(N):
+    """ Generate the combination of segments """
+    segments = ((i, j, k) for i in range(N) for j in range(i + 2, N-1) for k in range(j + 2, N - 1 + (i > 0)))
+    return segments
+'''
+
+def plot_fastest_route(path_list, image):
+    """
+    Plots the recommended path to take between different attractions using each attraction's ID
+
+    :param path_list: List of attraction IDs
+    :param image: Image name to be used
+    :return: Plot of inputted image with path overlay
+    """
+    # Display inputted image
+    img = mpimg.imread(image)
+    plt.imshow(img)
+
+    # Create counter for plotting
+    counter = 0
+
+    # Variables for holding point coordinates
+    x = 0
+    y = 0
+
+    # Graph and annotate each point on image
+    for _ in x_coordinates:
+
+        plt.plot(x_coordinates[path_list[counter]], y_coordinates[path_list[counter]],
+                 marker='*', color='black', markersize=7)
+
+        # Annotate each point with the attraction number
+        plt.annotate(counter + 1, (x_coordinates[path_list[counter]],
+                                   y_coordinates[path_list[counter]]), color='blue', weight='bold', size=11)
+
+        # Skip first point
+        if x != 0:
+
+            # Draw arrows that connect attractions
+            plt.arrow(x_coordinates[path_list[counter]], y_coordinates[path_list[counter]],
+                      (x - x_coordinates[path_list[counter]]), y - y_coordinates[path_list[counter]])
+
+        # Get previous point for drawing arrows
+        x = x_coordinates[path_list[counter]]
+        y = y_coordinates[path_list[counter]]
+
+        counter += 1
+
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -77,13 +272,13 @@ if __name__ == "__main__":
                 print(f'{attr.id:02d}: {attr.get_attraction_name()}')
 
             # Only print on first loop
-            print_counter +=1
+            print_counter += 1
 
         # User chooses starting attraction (program ignores apostrophes, leading/trailing whitespace, and
         # capitalization, but end-of-line punctuation should not be passed)
         name_to_search = input(Fore.RESET + '\nEnter one of the above attraction IDs or at least a portion '
-                               'of the attraction\'s name that you would like to start at. '
-                               'Press ENTER to start at the front of the park.:\n')
+                                            'of the attraction\'s name that you would like to start at. '
+                                            'Press ENTER to start at the front of the park.:\n')
         stripped_input = ''.join(name_to_search.lower().strip().split("'"))
 
         # List storing all attraction names that match/include the entered string
@@ -106,8 +301,8 @@ if __name__ == "__main__":
 
         # Multiple attractions associated with input
         elif len(searched_attr_list) > 1:
-            print(Fore.LIGHTRED_EX + f'\nERROR: Multiple attractions found that include "{stripped_input}".'
-                                     f'\n{Fore.RESET}Did you mean one of these?:\n{searched_attr_list}\n')
+            print(f'{Fore.LIGHTRED_EX}\nERROR: Multiple attractions found that include "{stripped_input}".'
+                  f'\n{Fore.RESET}Did you mean one of these?:\n{searched_attr_list}\n')
 
         # Input is invalid
         else:
@@ -126,7 +321,10 @@ if __name__ == "__main__":
     first_attr = db.get_attraction_by_name(first_attr_name)
     first_attr_id = first_attr.id
 
-    # Pixel coordinates of each attraction on the park map: (x, y)
+    # Image name
+    image_name = 'Magic Kingdom Updated.png'
+
+    # Manually found pixel coordinates of each attraction on the image: (x, y)
     attraction_coordinates = [80.43, 667.25,
                               1001.09, 656.34,
                               120.65, 415.39,
@@ -168,29 +366,21 @@ if __name__ == "__main__":
                               989.13, 722.85,
                               254.35,  698.86]
 
-    # Split pixel coordinates into x and y
-    x_coordinates, y_coordinates = [], []
-
-    for i in attraction_coordinates:
-        if len(x_coordinates) <= len(y_coordinates):
-            x_coordinates.append(i)
-        else:
-            y_coordinates.append(i)
-
-    # Create symmetric array of attraction pixel distances
-    all_pixel_distances = np.diag(np.zeros(40))
-
-    for y in range(0, 40):
-        for x in range(0, 40):
-
-            if x == y:
-                all_pixel_distances[x][y] = 0
-
-            else:
-                all_pixel_distances[x][y] = (
-                    np.sqrt((x_coordinates[x] - x_coordinates[y]) ** 2 + (y_coordinates[x] - y_coordinates[y]) ** 2))
+    # Get distances between attractions based off of pixel coordinates
+    attr_pixel_distances = get_pixel_distances(attraction_coordinates)
 
     # Run christofides algorithm (guaranteed to be no longer than 3/2 of the optimal path)
-    recommended_path = run_christofides_algorithm(all_pixel_distances, first_attr_id)
+    chris_path = run_christofides_algorithm(attr_pixel_distances, first_attr_id)
+
+    print(f'\nIt is recommended that you visit attractions in the following order:\n{chris_path}')
+
+    # Plot path on the image
+    plot_fastest_route(chris_path, image_name)
+
+    '''# Improve path using 3-opt algorithm
+    recommended_path = tsp_3_opt(attr_pixel_distances, chris_path)
 
     print(f'\nIt is recommended that you visit attractions in the following order:\n{recommended_path}')
+
+    # Plot path on the image
+    plot_fastest_route(recommended_path, image_name)'''
