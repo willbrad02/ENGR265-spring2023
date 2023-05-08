@@ -1,4 +1,6 @@
-"""Find the optimum path through Disney World's Magic Kingdom using Christofides algorithm and a 3-opt algorithm.
+"""Find the optimum path through Disney World's Magic Kingdom
+
+Done by chaining Christofides algorithm and a 3-opt algorithm.
 
 Authors: Will Bradford, Zack Kreitzer, Alex Kreitzer
 Version: 5-7-23
@@ -7,7 +9,7 @@ Assumptions: A .json file of all point-of-interest (POI) names and a .json file 
              POIs, as the crow flies, are given.
 
 References: http://matejgazda.com/christofides-algorithm-in-python/
-
+            http://matejgazda.com/tsp-algorithms-2-opt-3-opt-in-python/
 """
 from colorama import Fore
 from pytsp.data_structures.opt_case import OptCase
@@ -266,6 +268,40 @@ def plot_fastest_route(path_list, image):
     plt.show()
 
 
+def find_total_distance(path_list, distance_array):
+    """
+    Function which takes a list of points and a symmetrical distance array between points and
+    finds total distance of the path taken
+
+    :param path_list: list of integers which is the series of destinations through the park
+    :param distance_array: symmetrical array of distances between each point and every other point
+    :return: single total distance value between all points
+    """
+
+    # Create list to hold each distance
+    distance_list = []
+
+    # Create variable to store previous point
+    point = -1
+
+    for i in path_list:
+        if point != -1:
+
+            # Find distance between points
+            distance = attr_pixel_distances[i, point]
+
+            # Multiplied by factor which converts pixel distance to feet
+            distance_list.append(distance * 2.272)
+
+        # Update previous point
+        point = i
+
+    # Find total distance
+    total_distance = sum(distance_list)
+
+    print('The total distance walked would be', int(total_distance), 'feet')
+
+
 if __name__ == "__main__":
 
     # Instantiate database
@@ -394,6 +430,7 @@ if __name__ == "__main__":
 
     '''# Print and plot Christofides path
     print(f'\nIt is recommended that you visit attractions in the following order:\n{chris_path}')
+    find_total_distance(chris_path, attr_pixel_distances)
     plot_fastest_route(chris_path, image_name)'''
 
     # Improve path using 3-opt algorithm
@@ -406,4 +443,5 @@ if __name__ == "__main__":
 
     # Print and plot 3-opt path
     print(f'\nIt is recommended that you visit attractions in the following order:\n{recommended_path}')
+    find_total_distance(recommended_path, attr_pixel_distances)
     plot_fastest_route(recommended_path, image_name)
